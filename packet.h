@@ -20,33 +20,40 @@ public:
     string to_string() const;
 };
 
+/* A class that represents the payload that is attached with each packet. */
+class Payload {
+    int sequence_number;
+    int task_duration;
+
+public:
+    Payload() = default;
+    Payload(int sequenceNumber, int taskDuration);
+    int get_sequence_number() const;
+    int get_task_duration() const;
+    string serialize() const;
+};
+
+
 class Packet {
     IpAddr source_ip;
     IpAddr destination_ip;
     int source_port;
     int destination_port;
     bool header_form;
-    string payload;
+    Payload payload;
 public:
     Packet() = default;
     Packet(const IpAddr source_ip, const IpAddr destination_ip, const int source_port, const int destination_port,
-           bool header_form, const string& payload);
-
+           bool header_form, Payload payload);
     bool is_short_header();
     virtual uint64_t get_dcid();
     virtual uint64_t get_scid();
-
     const IpAddr &get_source_ip() const;
-
     const IpAddr &get_destination_ip() const;
-
     int get_source_port() const;
-
     int get_destination_port() const;
-
-    const string &get_payload() const;
-
-    void setPayload(const string &payload);
+    const Payload &get_payload() const;
+    void setPayload(Payload payload);
 };
 
 class LongHeaderPacket : public Packet {
@@ -56,7 +63,7 @@ public:
     LongHeaderPacket() = default;
     LongHeaderPacket(const IpAddr source_ip, const IpAddr destination_ip, const int source_port,
                      const int destination_port, const uint64_t source_cid, const uint64_t destination_cid,
-                     const string& payload);
+                     Payload payload);
 
     uint64_t get_dcid() override;
     uint64_t get_scid() override;
@@ -66,7 +73,7 @@ class ShortHeaderPacket : public Packet {
     uint64_t destination_cid;
 public:
     ShortHeaderPacket(const IpAddr source_ip, const IpAddr destination_ip, const int source_port,
-                      const int destination_port, const uint64_t destination_cid, const string& payload);
+                      const int destination_port, const uint64_t destination_cid, Payload payload);
 
     uint64_t get_dcid() override;
     uint64_t get_scid() override;
@@ -80,26 +87,16 @@ class CID {
     uint server_id;
     uint nonce;
     uint phase;
+
 public:
     CID(int server_id, int nonce, int phase);
 
     // A constructor that build a CID from an encrypted CID of type long.
     CID(uint64_t encrypted_cid);
     uint64_t encrypt_cid();
-
     int get_server_id() const;
     int get_nonce() const;
     int get_phase() const;
 };
 
-/* A class that represents the payload that is attached with each packet. */
-class Payload {
-    int sequence_number;
-    int task_duration;
-
-public:
-    Payload(int sequenceNumber, int taskDuration);
-    int getSequenceNumber() const;
-    int getTaskDuration() const;
-};
 #endif //SCHEME_IMPLEMENTATION_PACKET_H

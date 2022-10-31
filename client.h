@@ -22,8 +22,16 @@ class Client {
 public:
     Client() = default;
     Client(int client_id, IpAddr client_ip, int client_port);
+
+    /* Generates a packet for sending. If an initial packet was not yet sent by this client, then an initial packet
+     * will be sent, otherwise a short header packet will be sent.*/
     shared_ptr<Packet> generate_send_packet();
+
+    /* Receives a packet by the client, this method is called by whoever wants to send the client a packet.*/
     void receive_packet(shared_ptr<Packet> received_packet);
+
+    /* Returns a task duration for the upcoming packet that will be sent.*/
+    int get_task_duration();
 };
 
 

@@ -2,9 +2,10 @@
 // Created by shahlarobert on 03/06/2022.
 //
 
+#include <thread>
 #include "backend_server.h"
 
-static string construct_response_payload(const string& payload) {
+static Payload construct_response_payload(Payload payload) {
     return payload;
 }
 BackendServer::BackendServer(): MiddleBox(SERVER_QUEUE_SIZE), server_id(0), nonce(0), phase(0) {}
@@ -27,7 +28,7 @@ uint64_t BackendServer::allocate_new_cid() {
 shared_ptr<Packet> BackendServer::long_header_response(shared_ptr<Packet> processed_packet) {
     uint64_t response_scid = this->allocate_new_cid();
 //    std::cout << "BackendServer::long_header_response: " << response_scid << std::endl; // TODO: remove
-    string response_payload = construct_response_payload(processed_packet->get_payload());
+    Payload response_payload = construct_response_payload(processed_packet->get_payload());
     this->server_client_cid[response_scid] = processed_packet->get_scid();
     shared_ptr<Packet> returned_packet(new LongHeaderPacket(this->server_ip,
                                                             processed_packet->get_source_ip(),
@@ -41,8 +42,12 @@ shared_ptr<Packet> BackendServer::long_header_response(shared_ptr<Packet> proces
 }
 
 shared_ptr<Packet> BackendServer::short_header_response(shared_ptr<Packet> processed_packet) {
+    if(!this->server_client_cid.contains(processed_packet->get_dcid())) {
+        log("backend_server", DROP, this->server_id, "sequence number: " + processed_packet->get_payload().serialize() + " client_ip: " + processed_packet->get_source_ip().to_string());
+    }
+
     uint64_t response_dcid = this->server_client_cid[processed_packet->get_dcid()];
-    string response_payload = construct_response_payload(processed_packet->get_payload());
+    Payload response_payload = construct_response_payload(processed_packet->get_payload());
     shared_ptr<Packet> returned_packet(new ShortHeaderPacket(this->server_ip,
                                                             processed_packet->get_source_ip(),
                                                             this->server_port,
@@ -61,14 +66,15 @@ shared_ptr<Packet> BackendServer::process_respond_packet() {
     shared_ptr<Packet> returned_packet = nullptr;
     assert(processed_packet != nullptr);
 
-    log("backend_server", RECEIVE, this->server_id, "sequence number: " + processed_packet->get_payload() + " client_ip: " + processed_packet->get_source_ip().to_string());
+    log("backend_server", RECEIVE, this->server_id, "sequence number: " + processed_packet->get_payload().serialize() + " client_ip: " + processed_packet->get_source_ip().to_string());
 
+    std::this_thread::sleep_for(std::chrono::milliseconds(processed_packet->get_payload().get_task_duration()));
     if(!processed_packet->is_short_header()) {
         returned_packet = this->long_header_response(processed_packet);
     } else {
         returned_packet = this->short_header_response(processed_packet);
     }
 
-    log("backend_server", SEND, this->server_id, "sequence number: " + processed_packet->get_payload() + " client_ip: " + processed_packet->get_source_ip().to_string());
+    log("backend_server", SEND, this->server_id, "sequence number: " + processed_packet->get_payload().serialize() + " client_ip: " + processed_packet->get_source_ip().to_string());
     return returned_packet;
 }

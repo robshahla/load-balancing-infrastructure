@@ -53,7 +53,7 @@ void Infrastructure::clients_send_packets() {
         int current_client = rand() % NUM_OF_CLIENTS;
         shared_ptr<Packet> packet_to_send = clients[current_client].generate_send_packet();
         if(packet_to_send == nullptr) {
-            std::this_thread::sleep_for(std::chrono::milliseconds(CLIENT_RESPONSE_WAIT_MS));
+//            std::this_thread::sleep_for(std::chrono::milliseconds(CLIENT_RESPONSE_WAIT_MS));
             continue;
         }
         router.push_packet(packet_to_send);

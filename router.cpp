@@ -52,45 +52,7 @@ int Router::routing_decision(shared_ptr<Packet>* packet) {
 
     // this is hardcoded for now, we assume that we have only one router
     const int current_router_id = 0;
-    log("router", SEND, current_router_id, "processing payload: " + processed_packet->get_payload());
+    log("router", SEND, current_router_id, "processing payload: " + processed_packet->get_payload().serialize());
 
     return route_policy(processed_packet);
 }
-
-//shared_ptr<Packet> Router::construct_packet(int current_client_index, pair<IpAddr, int> client_ip_port) {
-//    long destination_cid = this->client_messages[current_client_index].first;
-//    int sequence_number = this->client_messages[current_client_index].second;
-//
-//    if(sequence_number == INITIAL_SEQUENCE_NUMBER) {
-//        shared_ptr<Packet> long_header_packet(new LongHeaderPacket(client_ip_port.first,
-//                                                                   VIP,
-//                                                                   client_ip_port.second,
-//                                                                   VPORT,
-//                                                                   CLIENT_CID,
-//                                                                   destination_cid,
-//                                                                   std::to_string(sequence_number)));
-//        return long_header_packet;
-//    }
-//    shared_ptr<Packet> short_header_packet(new ShortHeaderPacket(client_ip_port.first,
-//                                                                 VIP,
-//                                                                 client_ip_port.second,
-//                                                                 VPORT,
-//                                                                 destination_cid,
-//                                                                 std::to_string(sequence_number)));
-//    return short_header_packet;
-//}
-//
-//void Router::clients_send_packets(int input_rate_ms) {
-//    pair<IpAddr, int> clients_ips_ports[NUM_OF_CLIENTS]; // An array of pairs of client IP+Port. [<ip, port>]
-//    allocate_ips_ports(clients_ips_ports);
-//    srand(RANDOM_SEED);
-//
-//    int counter = 0;
-//    while(counter < NUM_OF_CLIENT_PACKETS) {
-//        int current_client = rand() % NUM_OF_CLIENTS;
-//        shared_ptr<Packet> packet_to_send = construct_packet(current_client, clients_ips_ports[current_client]);
-//        this->push_packet(packet_to_send);
-//        counter++;
-//        std::this_thread::sleep_for(std::chrono::milliseconds(input_rate_ms));
-//    }
-//}

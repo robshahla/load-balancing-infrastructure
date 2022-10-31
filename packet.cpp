@@ -12,9 +12,23 @@ string IpAddr::to_string() const {
     return std::to_string(b1) + std::to_string(b2) + std::to_string(b3) + std::to_string(b4);
 }
 
+Payload::Payload(int sequenceNumber, int taskDuration) : sequence_number(sequenceNumber), task_duration(taskDuration) {}
+
+int Payload::get_sequence_number() const {
+    return sequence_number;
+}
+
+int Payload::get_task_duration() const {
+    return task_duration;
+}
+
+string Payload::serialize() const {
+    return std::to_string(sequence_number) + ", " + std::to_string(task_duration);
+}
+
 
 Packet::Packet(const IpAddr source_ip, const IpAddr destination_ip, const int source_port, const int destination_port,
-       bool header_form, const string& payload): source_ip(source_ip), destination_ip(destination_ip),
+       bool header_form, Payload payload): source_ip(source_ip), destination_ip(destination_ip),
                                                  source_port(source_port), destination_port(destination_port), header_form(header_form), payload(payload) {}
 
 bool Packet::is_short_header() {
@@ -45,17 +59,17 @@ int Packet::get_destination_port() const {
     return destination_port;
 }
 
-const string &Packet::get_payload() const {
+const Payload &Packet::get_payload() const {
     return payload;
 }
 
-void Packet::setPayload(const string &payload) {
+void Packet::setPayload(Payload payload) {
     Packet::payload = payload;
 }
 
 LongHeaderPacket::LongHeaderPacket(const IpAddr source_ip, const IpAddr destination_ip, const int source_port,
-                 const int destination_port, const uint64_t source_cid, const uint64_t destination_cid,
-                 const string& payload):
+                                   const int destination_port, const uint64_t source_cid, const uint64_t destination_cid,
+                                   Payload payload):
         Packet(source_ip, destination_ip, source_port, destination_port, LONG_HEADER, payload),
         source_cid(source_cid), destination_cid(destination_cid){}
 
@@ -70,7 +84,7 @@ uint64_t LongHeaderPacket::get_scid() {
 }
 
 ShortHeaderPacket::ShortHeaderPacket(const IpAddr source_ip, const IpAddr destination_ip, const int source_port,
-                  const int destination_port, const uint64_t destination_cid, const string& payload):
+                                     const int destination_port, const uint64_t destination_cid, Payload payload):
         Packet(source_ip, destination_ip, source_port, destination_port, SHORT_HEADER, payload),
         destination_cid(destination_cid){}
 
@@ -94,7 +108,7 @@ CID::CID(uint64_t encrypted_cid) {
     nonce = ((decrypted_value >> 24) & 0xffffffff);
     phase = (decrypted_value & 0xffffff);
     std::cout << "decrypt" << std::endl; // TODO: remove
-    std::cout << server_id << "|" << nonce << "|" << phase; // TODO: remove
+    std::cout << server_id << "|" << nonce << "|" << phase << std::endl; // TODO: remove
 }
 
 uint64_t CID::encrypt_cid() {
@@ -120,12 +134,3 @@ int CID::get_phase() const {
     return phase;
 }
 
-Payload::Payload(int sequenceNumber, int taskDuration) : sequence_number(sequenceNumber), task_duration(taskDuration) {}
-
-int Payload::getSequenceNumber() const {
-    return sequence_number;
-}
-
-int Payload::getTaskDuration() const {
-    return task_duration;
-}

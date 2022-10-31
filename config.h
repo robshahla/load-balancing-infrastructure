@@ -49,6 +49,7 @@ void log(string type, string process, int id, string message);
 // strings that explain the process that is being done by a middle box
 const string SEND = "SEND";
 const string RECEIVE = "RECEIVE";
+const string DROP = "DROP";
 
 
 

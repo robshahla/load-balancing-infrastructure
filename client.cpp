@@ -17,11 +17,13 @@ shared_ptr<Packet> Client::generate_send_packet() {
     if(!last_packet_acked)
         return nullptr;
 
-//    if(last_received_packet == nullptr && sent_initial)
-//        return nullptr; //In this case the client is waiting for a response from the server.
-
-    string payload = std::to_string(sequence_number);
-    log("client", SEND, client_id, "sequence number: " + payload);
+    int task_duration = get_task_duration();
+    Payload payload(
+            sequence_number,
+            task_duration
+            );
+//    string payload = std::to_string(sequence_number);
+    log("client", SEND, client_id, "sequence number: " + payload.serialize());
     if(!sent_initial) {
         shared_ptr<Packet> long_header_packet(new LongHeaderPacket(client_ip,
                                                                    VIP,
@@ -56,5 +58,9 @@ void Client::receive_packet(shared_ptr<Packet> received_packet) {
     }
     sequence_number++;
     last_packet_acked = true;
-    log("client", RECEIVE, client_id, "sequence number: " + received_packet->get_payload());
+    log("client", RECEIVE, client_id, "sequence number: " + received_packet->get_payload().serialize());
+}
+
+int Client::get_task_duration() {
+    return 5000; // TODO: make this generate a random number depending on seed
 }

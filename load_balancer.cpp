@@ -43,7 +43,7 @@ int LoadBalancer::routing_decision(shared_ptr<Packet>* packet) {
     assert(processed_packet != nullptr);
     *packet = processed_packet;
 
-    log("LB", SEND, this->load_balancer_id, "processing payload: " + processed_packet->get_payload());
+    log("LB", SEND, this->load_balancer_id, "processing payload: " + processed_packet->get_payload().serialize());
 
     if(processed_packet->is_short_header()) {
         return route_cid(processed_packet);

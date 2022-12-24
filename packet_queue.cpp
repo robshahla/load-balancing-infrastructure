@@ -7,12 +7,13 @@
 PacketQueue::PacketQueue(int size): max_size(size) {}
 
 
-void PacketQueue::enqueue(std::shared_ptr<Packet>& packet) {
+bool PacketQueue::enqueue(std::shared_ptr<Packet>& packet) {
     if(packet_queue.size() == max_size)
-        return;
+        return false;
     changing_lock.lock();
     packet_queue.push(packet);
     changing_lock.unlock();
+    return true;
 }
 
 shared_ptr<Packet> PacketQueue::dequeue() {
@@ -27,4 +28,12 @@ shared_ptr<Packet> PacketQueue::dequeue() {
 
 bool PacketQueue::isEmpty() {
     return packet_queue.empty();
+}
+
+int PacketQueue::get_size() {
+    return packet_queue.size();
+}
+
+int PacketQueue::get_max_size() const {
+    return max_size;
 }

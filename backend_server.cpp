@@ -4,14 +4,16 @@
 
 #include <thread>
 #include "backend_server.h"
+#include "utils.h"
 
 static Payload construct_response_payload(Payload payload) {
     return payload;
 }
-BackendServer::BackendServer(): MiddleBox(SERVER_QUEUE_SIZE), server_id(0), nonce(0), phase(0) {}
+BackendServer::BackendServer(): MiddleBox(SERVER_QUEUE_SIZE, "backend-server"), server_id(0), nonce(0), phase(0) {}
 
-BackendServer::BackendServer(int server_id, IpAddr server_ip, int server_port): MiddleBox(SERVER_QUEUE_SIZE), server_ip(server_ip),
-server_port(server_port), server_id(server_id), nonce(INITIAL_NONCE), phase(INITIAL_PHASE) {}
+BackendServer::BackendServer(int server_id, IpAddr server_ip, int server_port): MiddleBox(SERVER_QUEUE_SIZE, "backend-server-" +
+        std::to_string(server_id)), server_ip(server_ip), server_port(server_port),
+        server_id(server_id), nonce(INITIAL_NONCE), phase(INITIAL_PHASE) {}
 
 void BackendServer::init(int id, IpAddr ip, int port) {
     server_id = id;

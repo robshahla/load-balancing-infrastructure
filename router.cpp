@@ -4,6 +4,7 @@
 
 #include "router.h"
 #include "packet.h"
+#include "utils.h"
 #include <string>
 
 using std::rand;
@@ -17,7 +18,7 @@ static void allocate_ips_ports(pair<IpAddr, int>* clients_ips_ports) {
     IpAddr base_ip = BASE_CLIENT_IP;
     int base_port = BASE_CLIENT_PORT;
 
-    for(int i = 0; i < NUM_OF_CLIENTS; ++i) {
+    for(int i = 0; i < MAX_NUM_OF_CLIENTS; ++i) {
         IpAddr current_ip = base_ip;
         current_ip.b4 += i;
         int current_port = base_port;
@@ -27,7 +28,7 @@ static void allocate_ips_ports(pair<IpAddr, int>* clients_ips_ports) {
     }
 }
 
-Router::Router(int packet_queue_size): MiddleBox(packet_queue_size) {
+Router::Router(int packet_queue_size): MiddleBox(packet_queue_size, "router") {
 //    std::srand(RANDOM_SEED);
 //    for(int i = 0; i < NUM_OF_CLIENTS; ++i) {
 //        client_messages[i].first = long(std::rand());

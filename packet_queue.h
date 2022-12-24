@@ -28,9 +28,14 @@ public:
     PacketQueue() = default;
     explicit PacketQueue(int size);
     ~PacketQueue() = default;
-    void enqueue(std::shared_ptr<Packet>& packet);
+
+    /* inserts the given packet to the queue. returns true if the packet was inserted, otherwise false
+     * (if the packet was dropped because the queue is full).*/
+    bool enqueue(std::shared_ptr<Packet>& packet);
     std::shared_ptr<Packet> dequeue();
     bool isEmpty();
+    int get_size();
+    int get_max_size() const;
 };
 
 

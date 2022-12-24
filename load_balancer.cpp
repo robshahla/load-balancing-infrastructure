@@ -5,6 +5,7 @@
 #include "load_balancer.h"
 #include "config.h"
 #include "packet.h"
+#include "utils.h"
 
 using std::hash;
 
@@ -29,7 +30,8 @@ int route_policy(shared_ptr<Packet> processed_packet) {
     return hash<string>{}(four_tuple) % NUM_OF_BACKEND_SERVERS;
 }
 
-LoadBalancer::LoadBalancer(int load_balancer_id): MiddleBox(LB_QUEUE_SIZE), load_balancer_id(load_balancer_id) {}
+LoadBalancer::LoadBalancer(int load_balancer_id): MiddleBox(LB_QUEUE_SIZE, "load-balancer-" + std::to_string(load_balancer_id)),
+load_balancer_id(load_balancer_id) {}
 
 void LoadBalancer::init(int id) {
     this->load_balancer_id = id;

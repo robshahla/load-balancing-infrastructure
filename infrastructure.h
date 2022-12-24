@@ -25,6 +25,7 @@ class Infrastructure {
     vector<LoadBalancer> load_balancers;
     vector<BackendServer> backend_servers;
     vector<Client> clients;
+    int number_of_active_clients;
 public:
     Infrastructure();
 
@@ -48,6 +49,12 @@ public:
      * in the given index and responds with the relevant response to the
      * client.*/
     void backend_server_process(int index);
+
+    /* log_queue_sizes: iterates over all queues in the system (in LBs, backend servers, router) and
+     * logs the sizes of the queues into a csv file (`output_file`). the
+     * probing of the queue size is done every `probe_rate` milliseconds.
+     * This method creates a new file if no output file exists, otherwise appends to the existing file.*/
+    void log_queue_sizes(string output_file, int probe_rate);
 };
 
 

@@ -3,6 +3,7 @@
 //
 
 #include "client.h"
+#include "utils.h"
 
 
 Client::Client(int client_id, IpAddr client_ip, int client_port): client_id(client_id), client_ip(client_ip), client_port(client_port),
@@ -22,10 +23,11 @@ shared_ptr<Packet> Client::generate_send_packet() {
             sequence_number,
             task_duration
             );
-//    string payload = std::to_string(sequence_number);
+
+    shared_ptr<Packet> returned_packet = nullptr;
     log("client", SEND, client_id, "sequence number: " + payload.serialize());
     if(!sent_initial) {
-        shared_ptr<Packet> long_header_packet(new LongHeaderPacket(client_ip,
+        returned_packet = shared_ptr<Packet>(new LongHeaderPacket(client_ip,
                                                                    VIP,
                                                                    client_port,
                                                                    VPORT,
@@ -33,20 +35,18 @@ shared_ptr<Packet> Client::generate_send_packet() {
                                                                    dcid,
                                                                    payload));
         sent_initial = true;
-        last_packet_acked = false;
-//        sequence_number++;
-        return long_header_packet;
+    } else {
+        returned_packet = shared_ptr<Packet>(new ShortHeaderPacket(client_ip,
+                                                                     VIP,
+                                                                     client_port,
+                                                                     VPORT,
+                                                                     dcid,
+                                                                     payload));
+
     }
 
-    shared_ptr<Packet> short_header_packet(new ShortHeaderPacket(client_ip,
-                                                                 VIP,
-                                                                 client_port,
-                                                                 VPORT,
-                                                                 dcid,
-                                                                 payload));
     last_packet_acked = false;
-//    sequence_number++;
-    return short_header_packet;
+    return returned_packet;
 }
 
 void Client::receive_packet(shared_ptr<Packet> received_packet) {
@@ -62,5 +62,6 @@ void Client::receive_packet(shared_ptr<Packet> received_packet) {
 }
 
 int Client::get_task_duration() {
-    return 5000; // TODO: make this generate a random number depending on seed
+//    std::srand(RANDOM_SEED);
+    return (std::rand() % 10 + 1) * 1000 ; // TODO: make this generate a random number depending on seed
 }

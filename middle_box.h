@@ -13,13 +13,21 @@ using std::shared_ptr;
 class MiddleBox {
     /*A queue that will contain the received packets from clients, and packets are forwarded from it.*/
     PacketQueue packet_queue;
+    string name;
+
 public:
     MiddleBox() = default;
-    explicit MiddleBox(int queue_size);
+    MiddleBox(int queue_size, const string& name);
     ~MiddleBox() = default;
-    void push_packet(shared_ptr<Packet> packet);
+
+    /* inserts the given packet to the queue. returns true if the packet was inserted, otherwise false
+    * (if the packet was dropped because the queue is full).*/
+    bool push_packet(shared_ptr<Packet> packet);
     bool is_queue_empty();
     shared_ptr<Packet> pop_packet();
+    int get_queue_size();
+    const string &getName() const;
+    int get_queue_max_size();
 };
 
 

@@ -11,7 +11,7 @@
 class LoadBalancer : public MiddleBox{
     int load_balancer_id;
 public:
-    LoadBalancer(int load_balancer_id = 0);
+    LoadBalancer();
 
     /* routing_decision: Pops a packet from the packet queue, and makes the routing decision considering if the packet
      * is a long or a short header packet. the method returns the server ID for which the packet should be routed, or

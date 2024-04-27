@@ -30,11 +30,11 @@ int route_policy(shared_ptr<Packet> processed_packet) {
     return hash<string>{}(four_tuple) % NUM_OF_BACKEND_SERVERS;
 }
 
-LoadBalancer::LoadBalancer(int load_balancer_id): MiddleBox(LB_QUEUE_SIZE, "load-balancer-" + std::to_string(load_balancer_id)),
-load_balancer_id(load_balancer_id) {}
+LoadBalancer::LoadBalancer(): MiddleBox(LB_QUEUE_SIZE, "load-balancer"), load_balancer_id(0) {}
 
 void LoadBalancer::init(int id) {
     this->load_balancer_id = id;
+    this->setName(this->getName() + "-" + std::to_string(id));
 }
 
 int LoadBalancer::routing_decision(shared_ptr<Packet>* packet) {

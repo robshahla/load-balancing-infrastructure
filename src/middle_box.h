@@ -27,6 +27,7 @@ public:
     shared_ptr<Packet> pop_packet();
     int get_queue_size();
     const string &getName() const;
+    void setName(const string &name);
     int get_queue_max_size();
 };
 

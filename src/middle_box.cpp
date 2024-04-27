@@ -31,3 +31,7 @@ const string &MiddleBox::getName() const {
 int MiddleBox::get_queue_max_size() {
     return this->packet_queue.get_max_size();
 }
+
+void MiddleBox::setName(const string &name) {
+    MiddleBox::name = name;
+}

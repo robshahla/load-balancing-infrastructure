@@ -19,6 +19,7 @@ void BackendServer::init(int id, IpAddr ip, int port) {
     server_id = id;
     server_ip = ip;
     server_port = port;
+    this->setName(this->getName() + "-" + std::to_string(id));
 }
 
 uint64_t BackendServer::allocate_new_cid() {

@@ -10,12 +10,53 @@ An additional thread is used for monitoring the whole system. The monitoring thr
 
 In the payload of each packet, a `task_duration` field is included. This field is used to simulate the processing time of the backend server. When the backend server receives a packet, it sleeps for the duration specified in the `task_duration` field before responding to the client.
 
-## Development
+
+## Run
 Clone the repository:
 ```bash
 git clone git@github.com:robshahla/load-balancing-infrastructure.git
 ```
 
 Modify the `config.h` file to set the configuration paramaters such as the number of load balancers, backend servers, queue sizes, etc.
+
+To the run simulation, first compile the code using `make`:
+```bash
+make
+```
+
+Then run the simulation:
+```bash
+cd bin
+./program
+```
+
+Inside the `bin` directory, the log file is generated (`results.csv`). The log file contains the following columns:
+- `iteration`: the logging iteration number (since the logging works in iterations, probing the system every `PROBE_RATE_MS` - in `src/config.h`).
+- `middlebox_name`: the name of the middlebox (router, load balancer, or backend server) to which this line corresponds.
+- `get_queue_size (packets)`: the number of packets in the queue of the middlebox.
+- `probe_rate_ms`: the rate at which the system is probed (in milliseconds).
+- `queue_max_size (packets)`: the maximum size of the queue of the middlebox.
+- `active_clients`: the number of active clients in the system.
+
+
+
+To clean the compiled files, run:
+```bash
+make clean
+```
+
+
+## Development
+Clone the repository:
+```bash
+git clone git@github.com:robshahla/load-balancing-infrastructure.git
+```
+
+Modify the code in the `src` directory, and then compile the code using `make`:
+```bash
+make
+```
+
+To add your modifications to the repository, commit and push your changes to a new branch, and then create a pull request.
 
 

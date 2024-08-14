@@ -6,6 +6,7 @@
 #define SCHEME_IMPLEMENTATION_UTILS_H
 
 #include <iostream>
+#include <cassert>
 #include "config.h"
 
 class Metrics {
